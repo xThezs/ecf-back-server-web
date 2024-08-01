@@ -32,150 +32,235 @@ app.use(express.json());
 //Product Route
 //Find Product by Id
 app.get("/product/:id", async (req, res) => {
-    const id = req.params.id;
-    const product = await Product.findByPk(id);
-    res.status(200).json(product);
+    try {
+        const id = req.params.id;
+        const product = await Product.findByPk(id);
+        res.status(200).json(product);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Get Products Search
 app.get("/products/search/:input", async (req, res) => {
-    const input = req.params.input;
-    const products = await Product.findAll({
-        where: {
-            name: {
-                [Op.like]: `%${input}%`
+    try {
+        const input = req.params.input;
+        const products = await Product.findAll({
+            where: {
+                name: {
+                    [Op.like]: `%${input}%`
+                }
             }
-        }
-    });
-    res.status(200).json(products);
+        });
+        res.status(200).json(products);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Get Products limit
 app.get("/products/:limit", async (req, res) => {
-    const limit = parseInt(req.params.limit);
-    const products = await Product.findAll({ limit: limit });
-    res.status(200).json(products);
+    try {
+        const limit = parseInt(req.params.limit);
+        const products = await Product.findAll({ limit: limit });
+        res.status(200).json(products);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Get Products By Category ID
 app.get("/products/category/:categoryId", async (req, res) => {
-    const categoryId = parseInt(req.params.categoryId);
-    const products = await Product.findAll({ where: { CategoryId: categoryId } });
-    res.status(200).json(products);
+    try {
+        const categoryId = parseInt(req.params.categoryId);
+        const products = await Product.findAll({ where: { CategoryId: categoryId } });
+        res.status(200).json(products);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Post Product
 app.post("/product", async (req, res) => {
-    const newProduct = req.body;
-    const product = await Product.create({
-        name: newProduct.name,
-        price: newProduct.price,
-        categoryId: newProduct.categoryID
-    });
-    res.status(200).json(product);
+    try {
+        const newProduct = req.body;
+        const product = await Product.create({
+            name: newProduct.name,
+            price: newProduct.price,
+            categoryId: newProduct.categoryID
+        });
+        res.status(200).json(product);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Delete products by id
 app.delete("/product/:id", async (req, res) => {
-    const id = req.params.id;
-    const result = await Product.destroy({
-        where: {
-            id: id
-        }
-    });
-    res.status(200).json("L'élement a bien été supprimé");
+    try {
+        const id = req.params.id;
+        const result = await Product.destroy({
+            where: {
+                id: id
+            }
+        });
+        res.status(200).json("L'élement a bien été supprimé");
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Update Product
 app.put("/product", async (req, res) => {
-    let update = req.body;
-    await Product.update(update, {
-        where: {
-            id: update.id
-        }
-    });
-    res.status(200).json("Le produit a été modifié");
+    try {
+        let update = req.body;
+        await Product.update(update, {
+            where: {
+                id: update.id
+            }
+        });
+        res.status(200).json("Le produit a été modifié");
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Category Route
 //Get Category
 app.get("/categories", async (req, res) => {
-    const categories = await Category.findAll();
-    res.status(200).json(categories);
+    try {
+        const categories = await Category.findAll();
+        res.status(200).json(categories);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Get Category by Id
 app.get("/category/:id", async (req, res) => {
-    const id = req.params.id;
-    const category = await Category.findByPk(id);
-    res.status(200).json(category);
+    try {
+        const id = req.params.id;
+        const category = await Category.findByPk(id);
+        res.status(200).json(category);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Post Category
 app.post("/category", async (req, res) => {
-    const newCategory = req.body;
-    const category = await Category.create(newCategory);
-    res.status(200).json(category);
+    try {
+        const newCategory = req.body;
+        const category = await Category.create(newCategory);
+        res.status(200).json(category);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Delete Category by id
 app.delete("/category/:id", async (req, res) => {
-    const id = req.params.id;
-    const result = await Category.destroy({
-        where: {
-            id: id
-        }
-    });
-    res.status(200).json("L'élement a bien été supprimé");
+    try {
+        const id = req.params.id;
+        const result = await Category.destroy({
+            where: {
+                id: id
+            }
+        });
+        res.status(200).json("L'élement a bien été supprimé");
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Update Category
 app.put("/Category", async (req, res) => {
-    let update = req.body;
-    await Category.update(update, {
-        where: {
-            id: update.id
-        }
-    });
-    res.status(200).json("La category a bien été modifié");
+    try {
+        let update = req.body;
+        await Category.update(update, {
+            where: {
+                id: update.id
+            }
+        });
+        res.status(200).json("La category a bien été modifié");
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Voir les commandes passées
 //Get Sales
 app.get("/sales", async (req, res) => {
-    const sales = await Sale.findAll();
-    res.status(200).json(sales);
+    try {
+        const sales = await Sale.findAll();
+        res.status(200).json(sales);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Validate a command 
 app.put("/commande/validation/:id", async (req, res) => {
-    const id = req.params.id;
-    await Commande.update({ isValidated: true }, {
-        where: {
-            id: id,
-        },
-    });
-    res.status(200).json("La commande" + id + "a été validé");
+    try {
+        const id = req.params.id;
+        await Commande.update({ isValidated: true }, {
+            where: {
+                id: id,
+            },
+        });
+        res.status(200).json("La commande" + id + "a été validé");
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Add article in Cart
 app.post("/Cart/addProduct", async (req, res) => {
-    const addProduct = req.body;
-    const product = await ProductCart.create({
-        ProductId: addProduct.ProductId,
-        CartId: addProduct.CartId,
-        quantity: addProduct.quantity
-    });
-    res.status(200).json(product);
+    try {
+        const addProduct = req.body;
+        const product = await ProductCart.create({
+            ProductId: addProduct.ProductId,
+            CartId: addProduct.CartId,
+            quantity: addProduct.quantity
+        });
+        res.status(200).json(product);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Modify Article in Cart
 //Delete Article In Cart
 app.delete("/Cart/DeleteProduct/:id", async (req, res) => {
-    const ProductToDelete = req.body;
-    const result = await Category.destroy({
-        where: {
-            ProductId: ProductToDelete.ProductId,
-            CartId: ProductToDelete.CartId
-        }
-    });
-    res.status(200).json("L'élement a bien été supprimé");
+    try {
+        const ProductToDelete = req.body;
+        const result = await Category.destroy({
+            where: {
+                ProductId: ProductToDelete.ProductId,
+                CartId: ProductToDelete.CartId
+            }
+        });
+        res.status(200).json("L'élement a bien été supprimé");
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
 //Modify One Article in Cart
 app.put("/Cart/ModifyProduct", async (req, res) => {
-    let update = req.body;
-    await ProductCart.update({
-        quantity: update.quantity
-    }, {
-        where: {
-            CartId: update.CartId,
-            ProductId: update.ProductId
-        }
-    });
-    res.status(200).json("La quantité a été modifié à " + update.quantity);
+    try {
+        let update = req.body;
+        await ProductCart.update({
+            quantity: update.quantity
+        }, {
+            where: {
+                CartId: update.CartId,
+                ProductId: update.ProductId
+            }
+        });
+        res.status(200).json("La quantité a été modifié à " + update.quantity);
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
