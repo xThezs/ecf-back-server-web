@@ -22,6 +22,9 @@ const { ProductCommande } = require("./database/models/ProductCommande");
 const app = express();
 const port = 3030;
 app.use(cors());
+//Token
+const jwt = require("jsonwebtoken");
+const secret = "lesecretdusecretdumana";
 app.listen(port, function (err) {
     if (err) {
         console.log(err);
@@ -190,7 +193,7 @@ app.put("/Category", async (req, res) => {
 });
 //Voir les commandes passées
 //Get Sales
-app.get("/sales", async (req, res) => {
+app.get("/sales", checkAdmin, async (req, res) => {
     try {
         const sales = await Sale.findAll();
         res.status(200).json(sales);
@@ -200,7 +203,7 @@ app.get("/sales", async (req, res) => {
     }
 });
 //Validate a command 
-app.put("/commande/validation/:id", async (req, res) => {
+app.put("/commande/validation/:id", checkAdmin, async (req, res) => {
     try {
         const id = req.params.id;
         await Commande.update({ isValidated: true }, {
@@ -215,7 +218,7 @@ app.put("/commande/validation/:id", async (req, res) => {
     }
 });
 //Add article in Cart
-app.post("/Cart/addProduct", async (req, res) => {
+app.post("/Cart/addProduct", checkAdmin, async (req, res) => {
     try {
         const addProduct = req.body;
         const product = await ProductCart.create({
@@ -231,7 +234,7 @@ app.post("/Cart/addProduct", async (req, res) => {
 });
 //Modify Article in Cart
 //Delete Article In Cart
-app.delete("/Cart/DeleteProduct/:id", async (req, res) => {
+app.delete("/Cart/DeleteProduct/:id", checkAdmin, async (req, res) => {
     try {
         const ProductToDelete = req.body;
         const result = await Category.destroy({
@@ -247,7 +250,7 @@ app.delete("/Cart/DeleteProduct/:id", async (req, res) => {
     }
 });
 //Modify One Article in Cart
-app.put("/Cart/ModifyProduct", async (req, res) => {
+app.put("/Cart/ModifyProduct", checkAdmin, async (req, res) => {
     try {
         let update = req.body;
         await ProductCart.update({
@@ -262,5 +265,46 @@ app.put("/Cart/ModifyProduct", async (req, res) => {
     }
     catch (error) {
         console.error(error);
+    }
+});
+//Securiy 
+const accessauthority = async (importance) => {
+    const role = await Role.findOne({
+        where: {
+            importance
+        }
+    });
+    return role;
+};
+//User Route
+async function checkAdmin(req, res, next) {
+    if (!req.headers.authorization) {
+        return res.status(401).json("Missing Token");
+    }
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
+    const admin = await accessauthority(0);
+    jwt.verify(token, secret, (err, decodedToken) => {
+        if (err) {
+            res.status(401).json("Unauthorized, wrong token");
+            return;
+        }
+        switch (decodedToken.role) {
+            case admin.id:
+                next();
+                break;
+            default:
+                res.status(401).json("Unauthorized role");
+                break;
+        }
+    });
+}
+//Check Admin Route
+app.get("/checkAdmin", checkAdmin, async (req, res) => {
+    try {
+        res.status(200).json(true);
+    }
+    catch (error) {
+        console.log(error);
     }
 });
